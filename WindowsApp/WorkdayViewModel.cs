@@ -1,14 +1,16 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
+using System;
 
 namespace Workday
 {
     public class WorkdayViewModel : INotifyPropertyChanged
     {
         private DelegateCommand _workdayCommand;
-        private DelegateCommand _workingCommand;
-        private bool _workdayStarted;
-        private bool _working;
+        private DelegateCommand _blockCommand;
+        private WorkdayModel _model;
+        private TimeSpan _blockTimeSpan;
+        private TimeSpan _workdayTimeSpan;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -16,7 +18,7 @@ namespace Workday
         {
             get
             {
-                if (_workdayStarted)
+                if (_model.WorkdayStarted)
                 {
                     return Properties.Resources.WorkdayStop;
                 }
@@ -27,17 +29,51 @@ namespace Workday
             }
         }
 
-        public string WorkingButtonContent
+        public string BlockButtonContent
         {
             get
             {
-                if (_working)
+                if (_model.BlockStarted)
                 {
                     return Properties.Resources.WorkStop;
                 }
                 else
                 {
                     return Properties.Resources.WorkStart;
+                }
+            }
+        }
+
+        public TimeSpan BlockTimeSpan
+        {
+            get
+            {
+                return _blockTimeSpan;
+            }
+            set
+            {
+                if (value != _blockTimeSpan)
+                {
+                    _blockTimeSpan = value;
+
+                    OnPropertyChanged(nameof(BlockTimeSpan));
+                }
+            }
+        }
+
+        public TimeSpan WorkdayTimeSpan
+        {
+            get
+            {
+                return _workdayTimeSpan;
+            }
+            set
+            {
+                if (value != _workdayTimeSpan)
+                {
+                    _workdayTimeSpan = value;
+
+                    OnPropertyChanged(nameof(WorkdayTimeSpan));
                 }
             }
         }
@@ -50,40 +86,58 @@ namespace Workday
             }
         }
 
-        public ICommand WorkingCommand
+        public ICommand BlockCommand
         {
             get
             {
-                return _workingCommand;
+                return _blockCommand;
             }
         }
 
         public WorkdayViewModel()
         {
-            _working = false;
-            _workdayStarted = false;
+            _blockTimeSpan = new TimeSpan();
+            _workdayTimeSpan = new TimeSpan();
+            _model = new WorkdayModel();
+            _model.TimerExpired += (sender, args) =>
+            {
+                BlockTimeSpan = args.BlockTotal;
+                WorkdayTimeSpan = args.WorkdayTotal;
+            };
+
             _workdayCommand = DelegateCommand.Create(StartEndWorkday);
-            _workingCommand = DelegateCommand.Create(ToggleWorking, false);
+            _blockCommand = DelegateCommand.Create(StartEndBlock, false);
         }
 
         private void StartEndWorkday()
         {
-            _workdayStarted = !_workdayStarted;
-            _workingCommand.CanExecuteValue = _workdayStarted;
-
-            if (!_workdayStarted && _working)
+            if (_model.WorkdayStarted)
             {
-                ToggleWorking();
+                _model.StopWorkday();
+            }
+            else
+            {
+                _model.StartWorkday();
             }
 
+            _blockCommand.CanExecuteValue = _model.WorkdayStarted;
+
             OnPropertyChanged(nameof(WorkdayButtonContent));
+            OnPropertyChanged(nameof(BlockButtonContent));
         }
 
-        private void ToggleWorking()
+        private void StartEndBlock()
         {
-            _working = !_working;
-
-            OnPropertyChanged(nameof(WorkingButtonContent));
+            if (_model.BlockStarted)
+            {
+                _model.StopBlock();
+            }
+            else
+            {
+                _model.StartBlock();
+            }
+        
+            OnPropertyChanged(nameof(BlockButtonContent));
         }
 
         private void OnPropertyChanged(string propertyName)

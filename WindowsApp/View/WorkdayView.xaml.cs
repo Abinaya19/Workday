@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Workday
+namespace Workday.View
 {
     /// <summary>
     /// Interaction logic for WorkdayView.xaml

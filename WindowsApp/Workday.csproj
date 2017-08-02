@@ -56,8 +56,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DelegateCommand.cs" />
+    <Compile Include="View\TimeSpanConverter.cs" />
+    <Compile Include="WorkdayModel.cs" />
     <Compile Include="WorkdayViewModel.cs" />
-    <Page Include="WorkdayView.xaml">
+    <Page Include="View\WorkdayView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -65,7 +67,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WorkdayView.xaml.cs">
+    <Compile Include="View\WorkdayView.xaml.cs">
       <DependentUpon>WorkdayView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

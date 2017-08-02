@@ -10,11 +10,11 @@ namespace Workday.Test
         {
             var model = new WorkdayViewModel();
 
-            Assert.IsFalse(model.WorkingCommand.CanExecute(null));
+            Assert.IsFalse(model.BlockCommand.CanExecute(null));
 
             model.WorkdayCommand.Execute(null);
 
-            Assert.IsTrue(model.WorkingCommand.CanExecute(null));
+            Assert.IsTrue(model.BlockCommand.CanExecute(null));
         }
 
         [TestMethod]
@@ -22,12 +22,12 @@ namespace Workday.Test
         {
             var model = new WorkdayViewModel();
 
-            Assert.IsFalse(model.WorkingCommand.CanExecute(null));
+            Assert.IsFalse(model.BlockCommand.CanExecute(null));
 
             model.WorkdayCommand.Execute(null);
             model.WorkdayCommand.Execute(null);
 
-            Assert.IsFalse(model.WorkingCommand.CanExecute(null));
+            Assert.IsFalse(model.BlockCommand.CanExecute(null));
         }
     }
 }
